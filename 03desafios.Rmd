@@ -1,0 +1,255 @@
+---
+title: "03desafios"
+author: "Valentina Paz Campos Olguín"
+date: "2023-05-26"
+output:
+  html_document: default
+  pdf_document: default
+csl: apa.csl
+bibliography: bibliografia.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Ejercicio 3
+
+## 1. Explique para qué se puede utilizar o se ha utilizado cada distribución. Cite al menos un artículo científico.
+
+### Chi-squared
+
+Es una distribución de probabilidad que sirve para realizar pruebas de independencia y construir intervalos de confianza para la varianza. Se ha utilizado en la estadística inferencial, investigación social e investigación médica (ChatGPT, 2021).
+
+Por ejemplo, en el año 2007 se hizo una investigación pedriátrica para establecer si existía o no una independencia entre las variables cualitativas de los pacientes tales como: el sexo del recién nacido o su grado de desnutrición [@cerda2007interpretacion].
+
+### Inverse gamma
+
+Es una distribución de probabilidad que sirve para modelar variables aleatorias positivas con asimetría hacia la derecha. Se ha utilizado para realizar aplicaciones en el modelado de tiempos de vida, análisis de fiabilidad y de supervivencia. Describe y analiza variables aleatorias continuas no negativas (ChatGPT, 2021).
+
+Por ejemplo, según [-@doi:10.1080/03610926.2013.768667] se utiliza también para resolver problemas de la teoría de difracción y de corrosión en computadoras nuevas.
+
+### Student
+
+Es una distribución de probabilidad que sirve para hacer inferencias sobre el promedio de una población cuando se extrae una pequeña muestra. Gracias a esto, se pueden realizar hipótesis, descubrir incertidumbres que proporcionen intervalos de confianza e inferir información a partir de los parámetros de la población (ChatGPT, 2021).
+
+Value at risk (VaR) podría ser la medida más conocida para medir el riesgo de mercado. En este estudio se demuestra que la distribución Student es una de las más adecuadas para tratar este tipo de valores [@GAO2016216].
+
+## 2. Graficar las funciones de probabilidad y de probabilidad acumulada de cada distribución.
+
+### Chi-squared
+
+```{r}
+library(ggplot2)
+x = seq(0, 10, length = 1000)
+
+
+colors1 <- c("k1 = 1" = "blue4", "k2 = 2" = "red4", "k3 = 3" = "green4", "k4 = 5" = "coral3", "k5 = 10" = "yellow3")
+
+distribucion = dchisq(x, df = 1, ncp = 0, log = FALSE)
+distribucion2 = dchisq(x, df = 2, ncp = 0, log = FALSE)
+distribucion3 = dchisq(x, df = 3, ncp = 0, log = FALSE)
+distribucion5 = dchisq(x, df = 5, ncp = 0, log = FALSE)
+distribucion10 = dchisq(x, df = 10, ncp = 0, log = FALSE)
+
+datos=data.frame(x,distribucion)
+
+grafico = ggplot(data=datos,aes(x=x,y=distribucion))
+grafico = grafico + geom_line(aes(y=distribucion, color = "k1 = 1"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion2, color = "k2 = 2"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion3, color = "k3 = 3"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion5, color = "k4 = 5"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion10, color = "k5 = 10"), stat="identity", linewidth = 1)
+grafico = grafico + theme_bw() + ggtitle("Función de probabilidad - Chi-square")
+grafico = grafico + xlab("X") + ylab("Probabilidad")
+grafico = grafico + coord_cartesian(ylim=c(0,1))
+grafico = grafico + labs(color = "Valor de k")
+plot(grafico)
+```
+
+```{r}
+x = seq(0, 10, length = 1000)
+
+distribucion = pchisq(x, df = 2, lower.tail = TRUE, log.p = FALSE)
+
+datos=data.frame(x,distribucion)
+
+grafico = ggplot(data=datos,aes(x=x,y=distribucion))
+grafico = grafico + geom_line(stat="identity", color="blue4", linewidth = 1)
+grafico = grafico + theme_bw() + ggtitle("Probabilidad acumulada - Chi-square")
+grafico = grafico + xlab("X") + ylab("Probabilidad")
+plot(grafico)
+```
+
+### Inverse Gamma
+
+```{r}
+library(extraDistr)
+
+colors2 <- c("alpha = 1, beta = 1" = "blue4", "alpha = 2, beta = 1" = "red4", "alpha = 3, beta = 1" = "green4", "alpha = 3, beta = 0.5" = "yellow3")
+
+x = seq(0, 3, length = 1000)
+distribucion = dinvgamma(x, alpha = 1, beta = 1, log = FALSE)
+distribucion2 = dinvgamma(x, alpha = 2, beta = 1, log = FALSE)
+distribucion3 = dinvgamma(x, alpha = 3, beta = 1, log = FALSE)
+distribucion4 = dinvgamma(x, alpha = 3, beta = 0.5, log = FALSE)
+
+datos=data.frame(x,distribucion)
+
+grafico = ggplot(data=datos,aes(x=x,y=distribucion))
+grafico = grafico + geom_line(aes(y=distribucion, color = "alpha = 1, beta = 1"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion2, color = "alpha = 2, beta = 1"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion3, color = "alpha = 3, beta = 1"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion4, color = "alpha = 3, beta = 0.5"), stat="identity", linewidth = 1)
+grafico = grafico + theme_bw() + ggtitle("Distribución de probabilidades - Inverse Gamma")
+grafico = grafico + xlab("X") + ylab("Probabilidad")
+grafico = grafico + labs(color = "Valores de alpha y beta")
+
+plot(grafico)
+```
+
+```{r}
+x = seq(0, 3, length = 1000)
+alpha = 3
+distribucion = pinvgamma(x, alpha, beta = 0.5, log = FALSE)
+
+datos=data.frame(x,distribucion)
+
+grafico = ggplot(data=datos,aes(x=x,y=distribucion))
+grafico = grafico + geom_line(stat="identity", color="blue4", linewidth = 1)
+grafico = grafico + theme_bw() + ggtitle("Probabilidad acumulada - Inverse Gamma")
+grafico = grafico + xlab("X") + ylab("Probabilidad")
+plot(grafico)
+```
+
+### Student
+
+```{r}
+x = seq(-4, 4, length = 100)
+distribucion = dt(x, df = 1, log = FALSE)
+distribucion2 = dt(x, df = 2, log = FALSE)
+distribucion5 = dt(x, df = 5, log = FALSE)
+distribucion10 = dt(x, df = 1000000, log = FALSE)
+
+colors3 <- c("df1 = 1" = "blue4", "df2 = 2" = "red4", "df3 = 5" = "green4", "df4 = 1000000" = "yellow3")
+
+datos=data.frame(x,distribucion)
+
+grafico = ggplot(data=datos,aes(x=x,y=distribucion))
+grafico = grafico + geom_line(aes(y=distribucion, color = "df1 = 1"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion2, color = "df2 = 2"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion5, color = "df3 = 5"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion10, color = "df4 = 1000000"), stat="identity", linewidth = 1)
+grafico = grafico + theme_bw() + ggtitle("Distribución de probabilidades - Student")
+grafico = grafico + xlab("X") + ylab("Probabilidad")
+grafico = grafico + labs(color = "Valores de df")
+
+plot(grafico)
+```
+
+```{r}
+colors1 <- c("df1 = 1" = "blue4", "df2 = 2" = "red4", "df3 = 5" = "green4", "df4 = 1000000" = "yellow3")
+
+x = seq(-4, 4, length = 100)
+distribucion = pt(x, df = 1, log = FALSE)
+distribucion2 = pt(x, df = 2, log = FALSE)
+distribucion5 = pt(x, df = 5, log = FALSE)
+distribucion10 = pt(x, df = 1000000, log = FALSE)
+
+datos=data.frame(x,distribucion)
+
+grafico = ggplot(data=datos,aes(x=x,y=distribucion))
+grafico = grafico + geom_line(aes(y = distribucion, color = "df1 = 1"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion2, color = "df2 = 2"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion5, color = "df3 = 5"), stat="identity", linewidth = 1)
+grafico = grafico + geom_line(aes(y=distribucion10, color = "df4 = 1000000"), stat="identity", linewidth = 1)
+
+grafico = grafico + theme_bw() + ggtitle("Probabilidad acumulada - Student")
+grafico = grafico + xlab("X") + ylab("Probabilidad")
+
+grafico = grafico + labs(color = "Valores de df", )
+
+plot(grafico)
+```
+
+## 3. Establecer una semilla para el generador de números aleatorios con la función set.seed(). Genere 10, 100 y 1000 datos aleatorios utilizando la función con prefijo "r", grafique un histograma para cada caso. ¿Qué se puede observar?
+
+### Chi-squared
+
+```{r}
+set.seed(10)
+datos10 = rchisq(10, df = 3)
+
+hist(datos10, main = "Histograma de 10 datos Chisquare", xlab = "X", ylab = "Frecuencia")
+```
+
+```{r}
+set.seed(100)
+datos100 = rchisq(100, df = 3)
+
+hist(datos100, main = "Histograma de 100 datos Chisquare", xlab = "X", ylab = "Frecuencia")
+
+```
+
+```{r}
+set.seed(1000)
+datos1000 = rchisq(1000, df = 3)
+
+hist(datos1000, main = "Histograma de 1000 datos Chisquare", xlab = "X", ylab = "Frecuencia")
+
+```
+
+### Inverse Gamma
+
+```{r}
+library(extraDistr)
+set.seed(10)
+datos10 = rinvgamma(10, alpha = 3, beta = 0.5)
+
+hist(datos10, main = "Histograma de 10 datos Gamma Inversa", xlab = "X", ylab = "Frecuencia")
+```
+
+```{r}
+set.seed(100)
+datos100 = rinvgamma(100, alpha = 3, beta = 0.5)
+
+hist(datos100, main = "Histograma de 100 datos Gamma Inversa", xlab = "X", ylab = "Frecuencia")
+```
+
+```{r}
+set.seed(1000)
+datos1000 = rinvgamma(1000, alpha = 3, beta = 0.5)
+
+hist(datos1000, main = "Histograma de 1000 datos Gamma Inversa", xlab = "X", ylab = "Frecuencia")
+```
+
+### Student
+
+```{r}
+set.seed(10)
+datos10 = rt(10, df = 10000000)
+
+hist(datos10, main = "Histograma de 10 datos Student", xlab = "X", ylab = "Frecuencia")
+```
+
+```{r}
+set.seed(100)
+datos100 = rt(100, df = 10000000)
+
+hist(datos100, main = "Histograma de 100 datos Student", xlab = "X", ylab = "Frecuencia")
+```
+
+```{r}
+set.seed(1000)
+datos1000 = rt(1000, df = 10000000)
+
+hist(datos1000, main = "Histograma de 1000 datos Student", xlab = "X", ylab = "Frecuencia")
+```
+
+## Conclusión general
+
+Al analizar los histogramas de cada distribución con datos aleatorios, se puede visualizar que mientras más datos se generen, mayor será la semejanza entre la forma del histograma y el gráfico de las probabilidades de cada distribución.
+
+Es decir, mientras más grande la muestra, se representará de mejor forma la población.
+
+## Bibliografía
